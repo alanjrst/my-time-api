@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using my_time_api.Model;
+using my_time_api.Services;
 
 namespace my_time_api
 {
@@ -25,6 +28,13 @@ namespace my_time_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<StoreDatabaseSettings>(
+                Configuration.GetSection(nameof(StoreDatabaseSettings)));
+
+            services.AddSingleton<IStoreDatabaseSettings>( sp => sp.GetRequiredService<IOptions<StoreDatabaseSettings>>().Value);
+
+            services.AddSingleton<MyTimeService>(); 
+
             services.AddControllers();
         }
 
