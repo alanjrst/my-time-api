@@ -10,6 +10,10 @@ namespace my_time_api.Services
         public readonly IMongoCollection<Place> _place;
         public readonly FindOptions<Place> _optionsPlace;
         public readonly IMongoCollection<User> _user;
+        public readonly IMongoCollection<Job> _job;
+        public readonly FindOptions<Job> _optionsJob;
+        public readonly IMongoCollection<Time> _time;
+        public readonly FindOptions<Time> _optionsTime;
 
         public MyTimeService(IStoreDatabaseSettings settings)
         {
@@ -18,8 +22,10 @@ namespace my_time_api.Services
 
             _place = database.GetCollection<Place>(settings.PlaceCollectionName);
             _user = database.GetCollection<User>(settings.UserCollectionName);
+            _job = database.GetCollection<Job>(settings.JobCollectionName);
+            _time = database.GetCollection<Time>(settings.TimeCollectionName);
 
-            _optionsPlace = new FindOptions<Place>{ Sort = Builders<Place>.Sort.Ascending(place => place.PlaceId) };            
+            _optionsPlace = new FindOptions<Place>{ Sort = Builders<Place>.Sort.Ascending(place => place.PlaceId) };
         }        
     }
 }

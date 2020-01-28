@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using my_time_api.Model;
@@ -16,8 +17,7 @@ namespace my_time_api.Controllers
         public PlaceController(MyTimeService myTimeService)
         {
             _myTimeService = myTimeService;
-        }
-
+        }        
         [HttpGet]
         public async Task<ActionResult> Get() {
            return Ok((await _myTimeService._place.FindAsync(Place => true, _myTimeService._optionsPlace)).ToList());

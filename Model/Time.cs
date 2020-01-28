@@ -12,7 +12,7 @@ namespace my_time_api.Model
         public string Name { get; set; }
         public DateTime DateInital { get; set; }
         public DateTime DateEnd { get; set; }
-        public int TaskId { get; set; }
-        public int PlaceId { get; set; }
+        public string TaskId { get; set; }
+        public string PlaceId { get; set; }
     }
 }
