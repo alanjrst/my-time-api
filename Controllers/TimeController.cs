@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using my_time_api.Model;
@@ -8,6 +9,7 @@ namespace my_time_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TimeController : ControllerBase
     {
         private readonly MyTimeService _myTimeService;

@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using my_time_api.Model;
+using my_time_api.Service;
 using my_time_api.Services;
 
 namespace my_time_api.Controllers
@@ -16,20 +18,22 @@ namespace my_time_api.Controllers
             _myTimeService = myTimeService;
         }
 
-        [HttpPost("login")]
+        [HttpPost]
+        [Route("login")]
+        [AllowAnonymous]
         public ActionResult<User> Login(User userIn)
         {
-            var user = _myTimeService._user.Find(user => user.Email == userIn.Email).SingleOrDefault();
+            var user = _myTimeService._user.Find(user => user.Email == userIn.Email).FirstOrDefault();
 
             if(user == null)
                 return NotFound();
 
             if(BCrypt.Net.BCrypt.Verify(userIn.Password, user.Password)){
                 user.Password = "";
-                user.Token = "";
+                user.Token = TokenService.GenerateToken(user);
                 return Ok(user);
             }else{
-                return NotFound();
+                return BadRequest(new { Message = "Name and password not valid !" });
             }
         }
 
@@ -42,6 +46,7 @@ namespace my_time_api.Controllers
             return Ok(user);
         }
 
+        [Authorize]
         [HttpPut("{id:length(24)}")]
         public IActionResult Update(string id, User userIn)
         {
@@ -64,6 +69,7 @@ namespace my_time_api.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {

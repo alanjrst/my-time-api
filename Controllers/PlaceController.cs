@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using my_time_api.Model;
 using my_time_api.Services;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace my_time_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PlaceController : ControllerBase
     {
         private readonly MyTimeService _myTimeService;
