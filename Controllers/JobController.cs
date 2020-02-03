@@ -1,3 +1,5 @@
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +15,22 @@ namespace my_time_api.Controllers
     public class JobController : ControllerBase
     {
         private readonly MyTimeService _myTimeService;
+        public String _userId { get; set; }
 
         public JobController(MyTimeService myTimeService)
         {
-            _myTimeService = myTimeService;
+            _myTimeService = myTimeService;            
+            // _userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         }        
+        
         [HttpGet]
-        public async Task<ActionResult> Get() {
-           return Ok((await _myTimeService._job.FindAsync(job => true , _myTimeService._optionsJob)).ToList());
+        public async Task<ActionResult> Get() {            
+            return Ok((await _myTimeService._job.FindAsync(job => job.UserId == this.User.FindFirst(ClaimTypes.NameIdentifier).Value , _myTimeService._optionsJob)).ToList());
+        }
+
+        [HttpGet("byPlace/{idPlace}")]
+        public async Task<ActionResult> GetByPlace(string idPlace) {            
+            return Ok((await _myTimeService._job.FindAsync(job => job.PlaceId == idPlace , _myTimeService._optionsJob)).ToList());
         }
 
         [HttpGet("{id:length(24)}", Name = "GetJob")]
@@ -39,6 +49,7 @@ namespace my_time_api.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Job job)
         {
+            job.UserId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             await _myTimeService._job.InsertOneAsync(job);
 
             return CreatedAtRoute("GetJob", new { id = job.JobId }, job);

@@ -36,7 +36,7 @@ namespace my_time_api
 
             services.AddSingleton<IStoreDatabaseSettings>( sp => sp.GetRequiredService<IOptions<StoreDatabaseSettings>>().Value);
 
-            services.AddSingleton<MyTimeService>(); 
+            services.AddSingleton<MyTimeService>();
 
             services.AddControllers();
 

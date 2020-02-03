@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using my_time_api.Model;
-using my_time_api.Service;
 using my_time_api.Services;
 
 namespace my_time_api.Controllers
@@ -12,10 +12,12 @@ namespace my_time_api.Controllers
     public class UserController : ControllerBase
     {
         private readonly MyTimeService _myTimeService;
+        public readonly IConfiguration _config;
 
-        public UserController(MyTimeService myTimeService)
+        public UserController(MyTimeService myTimeService, IConfiguration config)
         {
             _myTimeService = myTimeService;
+            _config = config;
         }
 
         [HttpPost]
@@ -29,8 +31,9 @@ namespace my_time_api.Controllers
                 return NotFound();
 
             if(BCrypt.Net.BCrypt.Verify(userIn.Password, user.Password)){
+                var tokenService = new TokenService(_config);
                 user.Password = "";
-                user.Token = TokenService.GenerateToken(user);
+                user.Token = tokenService.GenerateToken(user);
                 return Ok(user);
             }else{
                 return BadRequest(new { Message = "Name and password not valid !" });

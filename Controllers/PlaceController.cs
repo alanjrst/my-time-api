@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using my_time_api.Model;
 using my_time_api.Services;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace my_time_api.Controllers
@@ -16,11 +18,12 @@ namespace my_time_api.Controllers
 
         public PlaceController(MyTimeService myTimeService)
         {
-            _myTimeService = myTimeService;
-        }        
+            _myTimeService = myTimeService;            
+        }
+        
         [HttpGet]
         public async Task<ActionResult> Get() {
-           return Ok((await _myTimeService._place.FindAsync(Place => true, _myTimeService._optionsPlace)).ToList());
+           return Ok((await _myTimeService._place.FindAsync(place => place.UserId == this.User.FindFirst(ClaimTypes.NameIdentifier).Value, _myTimeService._optionsPlace)).ToList());
         }
 
         [HttpGet("{id:length(24)}", Name = "GetPlace")]
@@ -39,8 +42,7 @@ namespace my_time_api.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Place place)
         {
-            if(string.IsNullOrEmpty(place.UserId))
-                return BadRequest("Place without user");
+            place.UserId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             await _myTimeService._place.InsertOneAsync(place);
 
