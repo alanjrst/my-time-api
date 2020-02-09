@@ -7,7 +7,7 @@ This is a project to measure the time we spend in places or activities and also 
 - [NET Core SDK 3.1.101](https://dotnet.microsoft.com/download/dotnet-core/3.1)
  - [Visual Studio Code](https://code.visualstudio.com/) ou [Visual Studio](https://visualstudio.microsoft.com/pt-br/)
 
-### Installing
+### How to use
 
 Clone the project (use the branch master other branches may be in development)
     
