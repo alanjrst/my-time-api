@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +42,33 @@ namespace my_time_api.Controllers
         }
 
         [HttpPost]
+        [Route("logout")]
+        [AllowAnonymous]
+        public ActionResult<User> Logout(User userIn)
+        {
+            var user = _myTimeService._user.Find(user => user.Email == userIn.Email).FirstOrDefault();
+
+            if(user == null)
+                return NotFound();
+            
+            var claims = new ClaimsIdentityLogout();
+            claims.Name = this.User.FindFirst(ClaimTypes.Name).Value;
+            claims.NameIdentifier = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            claims.Role = this.User.FindFirst(ClaimTypes.Role).Value;
+            
+            _myTimeService._claimsIdentityLogout.InsertOneAsync(claims);
+
+            return Ok("");
+        }
+
+        [HttpPost]
         public ActionResult<User> Create(User user)
         {
+            var userResult = _myTimeService._user.Find(user => user.Email == user.Email).SingleOrDefault();
+            if(userResult != null){
+                return BadRequest("Usuário já cadastrado.");
+            }
+
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             _myTimeService._user.InsertOneAsync(user);
 

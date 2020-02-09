@@ -23,11 +23,11 @@ namespace my_time_api.Services
              {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Name, user.Email),
                     new Claim(ClaimTypes.NameIdentifier, user.UserId),
                     new Claim(ClaimTypes.Role, user.Role == null ? "User" : user.Role)
                 }),
-                Expires = DateTime.UtcNow.AddHours(24),
+                Expires = DateTime.UtcNow.AddHours(24),                
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
